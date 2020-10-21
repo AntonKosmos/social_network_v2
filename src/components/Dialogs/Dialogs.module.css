@@ -1,0 +1,27 @@
+.dialogs {
+    display: grid;
+    grid-template-columns: 2fr 8fr;
+    padding: 10px;
+}
+
+.dialog {
+    border-right: 1px solid black;
+    text-align: center;
+}
+
+.dialog img {
+    width: 30px;
+    border-radius: 30px;
+}
+
+.dialog a {
+    color: white;
+}
+
+.messages {
+    color: white;
+}
+
+.message {
+    margin-left: 10px;
+}

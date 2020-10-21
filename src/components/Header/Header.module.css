@@ -1,0 +1,13 @@
+.header {
+    grid-area: h;
+    background: aquamarine;
+}
+
+.header img {
+    width: 80px;
+}
+
+.userInfo {
+    color: black;
+    float: right;
+}

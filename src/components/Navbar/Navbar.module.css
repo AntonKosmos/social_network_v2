@@ -1,0 +1,19 @@
+.nav {
+    grid-area: n;
+    background: bisque;
+    padding: 20px;
+}
+
+.item a {
+    color: #6c00c9;
+    text-decoration: none;
+}
+
+.item a.activeLink {
+    color: #000000;
+}
+
+.bestFriends {
+    display: grid;
+    grid-template-columns: 6fr 6fr 6fr;
+}
