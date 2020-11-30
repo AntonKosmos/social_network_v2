@@ -17,7 +17,6 @@ const MyPosts = (props) => {
     let PostElements = props.posts.map((post) => {
         return (<Post key ={post.id} message={post.message} countLike={post.countLike}/>);
     });
-
     return (
         <div className={s.postBlock}>
             <h3> My posts </h3>

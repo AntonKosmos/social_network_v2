@@ -2,7 +2,7 @@ import React from 'react';
 import Profile from "./Profile";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
-import {openUserProfile} from "../../redux/profile-reducer";
+import {getUserStatus, openUserProfile} from "../../redux/profile-reducer";
 import {withAuthRedirect} from "../../hoc/withAuthRedirect";
 import {compose} from "redux";
 
@@ -10,6 +10,7 @@ class ProfileApiComponent extends React.Component {
     componentDidMount() {
         let userId = this.props.match.params.userId;
         this.props.openUserProfile(userId);
+        this.props.getUserStatus(userId);
     }
 
     render() {
@@ -26,7 +27,7 @@ let mapStateToProps = (state) => {
 }
 
 export default compose(
-    connect(mapStateToProps, {openUserProfile}),
+    connect(mapStateToProps, {openUserProfile, getUserStatus}),
     withAuthRedirect,
     withRouter
 )(ProfileApiComponent);

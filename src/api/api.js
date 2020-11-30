@@ -23,7 +23,20 @@ export const userAPI = {
     },
 
     getUserProfile(userId) {
-        return axios.get(`https://social-network.samuraijs.com/api/1.0/profile/${userId}`).then(response => response.data)
+        console.warn("refactor code!");
+        return ProfileAPI.getUserProfile(userId)
+    }
+};
+
+export const ProfileAPI = {
+    getUserProfile(userId) {
+        return instance.get(`profile/${userId}`).then(response => response.data)
+    },
+    getUserStatus(userId) {
+        return instance.get(`profile/status/${userId}`).then(response => response.data)
+    },
+    updateUserStatus(status) {
+        return instance.posts(`profile/status`, {status}).then(response => response.data)
     }
 };
 

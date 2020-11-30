@@ -1,8 +1,9 @@
-import {userAPI} from "../api/api";
+import {ProfileAPI, userAPI} from "../api/api";
 
 const ADD_POST_TYPE = 'ADD_POST';
 const NEW_POST_TEXT_TYPE = 'NEW-POST-TEXT';
 const OPEN_USER_PROFILE = 'OPEN_USER_PROFILE';
+const GET_STATUS = 'GET_STATUS';
 
 let initialState = {
     posts: [
@@ -37,6 +38,12 @@ const profileReducer = (state = initialState, action) => {
                 profile: action.profile
             }
         }
+        case GET_STATUS: {
+            return {
+                ...state,
+                status: action.status
+            }
+        }
         default:
             return state;
 
@@ -63,6 +70,13 @@ export const openUserProfileAC = (profile) => {
     };
 };
 
+export const getStatus = (status) => {
+    return {
+        type: GET_STATUS,
+        status: status
+    };
+}
+
 //------------- THUNKS -------------
 
 export const openUserProfile = (userId) => {
@@ -74,5 +88,17 @@ export const openUserProfile = (userId) => {
         });
     };
 };
+
+export const getUserStatus = (userId) => {
+    return (dispatch) => {
+        if(!userId) {
+            userId = 2;
+        }
+        ProfileAPI.getUserStatus(userId).then(data => {
+            debugger;
+            dispatch(getStatus(data));
+        });
+    }
+}
 
 export default profileReducer;

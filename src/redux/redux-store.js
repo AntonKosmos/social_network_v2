@@ -5,6 +5,7 @@ import sidebarReducer from "./sidebar-reducer";
 import usersReducer from "./users-reducer";
 import authReducer from "./auth-reducer";
 import thunkMiddleware from 'redux-thunk';
+import musicReducer from "./music-reducer";
 
 let reduces = combineReducers(
     {
@@ -12,7 +13,8 @@ let reduces = combineReducers(
         dialogPage : dialogReducer,
         sidebar : sidebarReducer,
         usersPage : usersReducer,
-        auth : authReducer
+        auth : authReducer,
+        music: musicReducer
     }
 );
 
