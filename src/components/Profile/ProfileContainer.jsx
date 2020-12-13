@@ -9,8 +9,17 @@ import {compose} from "redux";
 class ProfileApiComponent extends React.Component {
     componentDidMount() {
         let userId = this.props.match.params.userId;
-        this.props.openUserProfile(userId);
-        this.props.getUserStatus(userId);
+        if(!userId && !this.props.isAuth) {
+            this.props.history.push("/login");
+        }
+        else if(!userId && this.props.isAuth) {
+            this.props.openUserProfile(this.props.myId);
+            this.props.getUserStatus(this.props.myId);
+        }
+        else {
+            this.props.openUserProfile(userId);
+            this.props.getUserStatus(userId);
+        }
     }
 
     render() {
@@ -22,13 +31,14 @@ let mapStateToProps = (state) => {
     return {
         profile: state.profilePage.profile,
         isAuth: state.auth.isAuth,
+        myId: state.auth.id,
         status: state.profilePage.status
     };
 }
 
 export default compose(
-    connect(mapStateToProps, {openUserProfile, getUserStatus}),
     withAuthRedirect,
+    connect(mapStateToProps, {openUserProfile, getUserStatus}),
     withRouter
 )(ProfileApiComponent);
 

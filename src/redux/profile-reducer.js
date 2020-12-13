@@ -81,24 +81,18 @@ export const getStatus = (status) => {
 
 export const openUserProfile = (userId) => {
     return (dispatch) => {
-        if (!userId)
-            userId = 2;
-        userAPI.getUserProfile(userId).then(data => {
-            dispatch(openUserProfileAC(data));
-        });
+            userAPI.getUserProfile(userId).then(data => {
+                dispatch(openUserProfileAC(data));
+            });
     };
 };
 
 export const getUserStatus = (userId) => {
     return (dispatch) => {
-        if(!userId) {
-            userId = 2;
-        }
         ProfileAPI.getUserStatus(userId).then(data => {
-            debugger;
             dispatch(getStatus(data));
         });
-    }
-}
+    };
+};
 
 export default profileReducer;

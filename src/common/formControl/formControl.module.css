@@ -1,0 +1,11 @@
+.formControl .required {
+    border: 2px solid red;
+}
+
+.formControl .maxlength span {
+    color: red;
+}
+
+.someError {
+    color: red;
+}
