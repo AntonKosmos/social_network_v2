@@ -5,10 +5,10 @@ export const Input = ({input, meta, ...props}) => {
     let hasError = meta.touched && meta.error;
     return (
         <div className={s.formControl}>
-            <div className={hasError && s.required}>
+            <div className={hasError ? s.required : null}>
                 <input  {...input} {...props}/>
             </div>
-            <div className={hasError && s.maxlength}>
+            <div className={hasError ? s.maxlength : null}>
                 <span>  {hasError && meta.error}</span>
             </div>
         </div>

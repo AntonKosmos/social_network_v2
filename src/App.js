@@ -1,11 +1,10 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import './App.css';
 import Navbar from "./components/Navbar/Navbar";
 import News from "./components/News/News"
 import Settings from "./components/Settings/Settings"
 import {Route, withRouter} from "react-router-dom";
 import DialogsContainer from "./components/Dialogs/DialogsContainer";
-import UsersContainer from "./components/Users/UsersContainer";
 import ProfileContainer from "./components/Profile/ProfileContainer";
 import HeaderContainer from "./components/Header/HeaderContainer";
 import Login from "./components/Login/Login";
@@ -14,6 +13,10 @@ import {connect} from "react-redux";
 import {compose} from "redux";
 import Preloader from "./common/preloader/preloader";
 import {appInitialization} from "./redux/app-reducer";
+import {withSuspense} from "./hoc/withSuspense";
+
+// import UsersContainer from "./components/Users/UsersContainer";
+const UsersContainer = React.lazy(() => import('./components/Users/UsersContainer'));
 
 let mapStateToProps = (state) => {
     return {
@@ -41,7 +44,7 @@ class App extends React.Component {
                     <Route path="/news" render={News}/>
                     <Route path="/settings" render={Settings}/>
                     <Route path="/music" render={() => <MusicContainer/>}/>
-                    <Route path="/users" render={() => <UsersContainer/>}/>
+                    <Route path="/users" render={withSuspense(UsersContainer)}/>
                     <Route path={'/Login'} render={() => <Login/>}/>
                 </div>
             </div>

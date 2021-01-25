@@ -1,4 +1,4 @@
-import {getUserStatus} from "./profile-reducer";
+import {getUserData} from "./auth-reducer";
 
 const  APP_INITIALIZATION_TYPE = "APP_INITIALIZATION_TYPE";
 
@@ -26,7 +26,7 @@ export const setInit = () => {
 
 export const appInitialization = () => {
     return (dispatch) => {
-        let promise = dispatch(getUserStatus());
+        let promise = dispatch(getUserData());
         Promise.all([promise]).then(data=> {
             dispatch(setInit());
         });

@@ -1,15 +1,17 @@
-import {authMe} from "../api/api";
+import {authMe, getCaptchaURL} from "../api/api";
 import {stopSubmit} from "redux-form";
 
 const SET_USER_DATA = 'SET-USER-DATA';
 const CHANGE_FEATCHING_TYPE = "CHANGE_FEACHING";
+const SET_CAPTCHA  = "SET_CAPTCHA"
 
 let initialStore = {
     id: null,
     login: null,
     email: null,
     isAuth: false,
-    isFetching: false
+    isFetching: false,
+    captcha: null
 };
 
 const authReducer = (state = initialStore, action) => {
@@ -24,6 +26,12 @@ const authReducer = (state = initialStore, action) => {
                 ...state,
                 isFetching: action.isFetching
             };
+        }
+        case SET_CAPTCHA: {
+            return {
+                ...state,
+                captcha: action.captcha
+            }
         }
         default:
             return state;
@@ -44,36 +52,46 @@ export const changeFetching = (isFetching) => {
     };
 };
 
+export const setCaptcha = (captcha) => {
+    return { type: SET_CAPTCHA, captcha }
+}
+
 //------------- THUNKS -------------
 
-export const getUserData = () => {
-    return (dispatch) => {
-        dispatch(changeFetching(true));
-       return  authMe.me().then(data => {
-            if (data.resultCode == 0) {
-                let {id, login, email} = data.data;
-                dispatch(setUserDataAC(id, login, email, true));
-                dispatch(changeFetching(false));
-            }
-        });
-    };
+export const getUserData = () => async (dispatch) => {
+    dispatch(changeFetching(true));
+    let data = await authMe.me();
+    if (data.resultCode == 0) {
+        let {id, login, email} = data.data;
+        dispatch(setUserDataAC(id, login, email, true));
+        dispatch(changeFetching(false));
+    }
+    return data;
 };
 
-export const login = ({email, password, rememberMe}) => (dispatch) => {
-    authMe.login({email, password, rememberMe}).then(data => {
-        if(!data.resultCode) {
-            dispatch(getUserData());
+export const login = ({email, password, rememberMe, captcha}) => async (dispatch) => {
+    let data = await authMe.login({email, password, rememberMe, captcha})
+    if (data.resultCode === 0) {
+        dispatch(getUserData());
+    }
+    else {
+        if(data.resultCode === 10) {
+            dispatch(getCaptcha());
         }
-        else dispatch(stopSubmit("login", {_error: data.messages.length ? data.messages[0] : "Some error" }));
-    })
-}
+        dispatch(stopSubmit("login", {_error: data.messages.length ? data.messages[0] : "Some error"}));
+    }};
 
-export const logout = () => (dispatch) => {
-    authMe.logout().then(data => {
-        if(!data.resultCode) {
-            dispatch(setUserDataAC(null, null, null, false));
-        }
-    })
-}
+export const getCaptcha = () => async (dispatch) => {
+    const data = await getCaptchaURL.getCaptcha();
+    const captchaURL = data.url;
+    dispatch(setCaptcha(captchaURL));
+};
+
+export const logout = () => async (dispatch) => {
+    let data = await authMe.logout()
+    if (!data.resultCode) {
+        dispatch(setUserDataAC(null, null, null, false));
+    }
+};
 
 export default authReducer;

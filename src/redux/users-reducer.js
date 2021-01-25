@@ -13,7 +13,7 @@ let initialStore = {
     pageSize: 20,
     totalUsersCount: 0,
     currentPage: 1,
-    maxPage: 5,
+    portionSize: 5,
     isFetching: false,
     followingProgress: []
 
@@ -135,41 +135,35 @@ export const changeToggleFollowing = (id, isFetching) => {
 //------------- THUNKS -------------
 
 export const getUsers = (pageSize, currentPage) => {
-    return dispatch => {
+    return async dispatch => {
         dispatch(selectPage(currentPage));
         dispatch(changeFetching(true));
+        let data = await userAPI.getUsers(pageSize, currentPage);
         userAPI.getUsers(pageSize, currentPage)
-            .then(data => {
-                dispatch(setUsers(data.items));
-                dispatch(setTotalUsers(data.totalCount));
-                dispatch(changeFetching(false));
-            })
+        dispatch(setUsers(data.items));
+        dispatch(setTotalUsers(data.totalCount));
+        dispatch(changeFetching(false));
     }
 }
 
 export const unfollow = (userId) => {
-    return (dispatch) => {
+    return async (dispatch) => {
         dispatch(changeToggleFollowing(userId, true));
-        userAPI.unfollow(userId)
-            .then(data => {
-                if (data.resultCode == 0)
-                    dispatch(unfollowAC(userId));
-                dispatch(changeToggleFollowing(userId, false));
-            })
+        let data = userAPI.unfollow(userId);
+        if (data.resultCode == 0)
+            dispatch(unfollowAC(userId));
+        dispatch(changeToggleFollowing(userId, false));
     };
 };
 
 export const follow = (userId) => {
-    return (dispatch) => {
+    return async (dispatch) => {
         dispatch(changeToggleFollowing(userId, true));
-        userAPI.follow(userId)
-            .then(data => {
-                if (data.resultCode == 0)
-                    dispatch(followAC(userId));
-                dispatch(changeToggleFollowing(userId, false));
-            })
+        let data = await userAPI.follow(userId);
+        if (data.resultCode == 0)
+            dispatch(followAC(userId));
+        dispatch(changeToggleFollowing(userId, false));
     };
 };
-
 
 export default usersReducer;

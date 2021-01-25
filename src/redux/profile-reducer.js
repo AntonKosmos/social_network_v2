@@ -1,9 +1,12 @@
 import {ProfileAPI, userAPI} from "../api/api";
+import {stopSubmit} from "redux-form";
 
 const ADD_POST_TYPE = 'ADD_POST';
 const NEW_POST_TEXT_TYPE = 'NEW-POST-TEXT';
 const OPEN_USER_PROFILE = 'OPEN_USER_PROFILE';
 const GET_STATUS = 'GET_STATUS';
+const SAVE_PHOTO_SUCCESS = "SAVE_PHOTO_SUCCESS";
+const SET_STATUS_LOADING = "SET_STATUS_LOADING";
 
 let initialState = {
     posts: [
@@ -13,7 +16,8 @@ let initialState = {
     ],
     updateNewPostText: "Hello",
     profile: null,
-    status: 'Hello my ffiends!'
+    status: 'Hello my ffiends!',
+    statusLoadData: false
 };
 
 const profileReducer = (state = initialState, action) => {
@@ -42,6 +46,21 @@ const profileReducer = (state = initialState, action) => {
             return {
                 ...state,
                 status: action.status
+            }
+        }
+        case SAVE_PHOTO_SUCCESS: {
+            return {
+                ...state,
+                profile: {
+                    ...state.profile,
+                    ...action.photos
+                }
+            }
+        }
+        case SET_STATUS_LOADING: {
+            return {
+                ...state,
+                statusLoadData: action.status
             }
         }
         default:
@@ -77,21 +96,60 @@ export const getStatus = (status) => {
     };
 }
 
+const savePhotoSuccess = (photos) => {
+    return { type: SAVE_PHOTO_SUCCESS, photos }
+};
+
+const setStatusLoading = (status) => {
+    return { type: SET_STATUS_LOADING, status }
+};
+
 //------------- THUNKS -------------
 
 export const openUserProfile = (userId) => {
-    return (dispatch) => {
-            userAPI.getUserProfile(userId).then(data => {
-                dispatch(openUserProfileAC(data));
-            });
+    return async (dispatch) => {
+        let data = await userAPI.getUserProfile(userId);
+        dispatch(openUserProfileAC(data));
     };
 };
 
 export const getUserStatus = (userId) => {
-    return (dispatch) => {
-        ProfileAPI.getUserStatus(userId).then(data => {
-            dispatch(getStatus(data));
-        });
+    return async (dispatch) => {
+        let data = await ProfileAPI.getUserStatus(userId);
+        dispatch(getStatus(data));
+    };
+};
+
+export const updateStatus = (status) => {
+    return async (dispatch) => {
+        let data = await ProfileAPI.updateUserStatus(status);
+        if (data.resultCode == 0) {
+            dispatch(getStatus(status));
+        }
+    };
+};
+
+export const savePhoto = (photo) => {
+    return async (dispatch) => {
+        let data = await ProfileAPI.saveProfilePhoto(photo);
+        if (data.resultCode == 0) {
+            dispatch(savePhotoSuccess(data.data));
+        }
+    };
+};
+
+export const updateProfileInfo = (profileInfo) => {
+    return async (dispatch, getState) => {
+        const id = getState().auth.id;
+        let data = await ProfileAPI.updateUserProfile(profileInfo);
+        if (data.resultCode == 0) {
+            dispatch(setStatusLoading(true));
+            dispatch(openUserProfile(id));
+        }
+        else {
+            dispatch(setStatusLoading(false));
+            dispatch(stopSubmit("editProfile", {_error: data.messages.length ? data.messages[0] : "Some error"}));
+        }
     };
 };
 

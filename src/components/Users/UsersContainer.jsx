@@ -24,13 +24,13 @@ class UsersContainer extends React.Component {
             {this.props.isFetching ? <Preloader/> : null}
             <Users totalUsersCount={this.props.totalUsersCount}
                    pageSize={this.props.pageSize}
-                   maxPage={this.props.maxPage}
                    currentPage={this.props.currentPage}
                    users={this.props.users}
                    unfollow={this.props.unfollow}
                    follow={this.props.follow}
                    onPageSelect={this.onPageSelect}
                    followingProgress={this.props.followingProgress}
+                   portionSize={this.props.portionSize}
             />
         </>
     }
@@ -42,11 +42,10 @@ let mapStateToUsers = (state) => {
         users: state.usersPage.users,
         totalUsersCount: state.usersPage.totalUsersCount,
         pageSize: state.usersPage.pageSize,
-        maxPage: state.usersPage.maxPage,
         currentPage: state.usersPage.currentPage,
         followingProgress: state.usersPage.followingProgress,
-        isFetching: state.usersPage.isFetching
-
+        isFetching: state.usersPage.isFetching,
+        portionSize: state.usersPage.portionSize
     }
 };
 

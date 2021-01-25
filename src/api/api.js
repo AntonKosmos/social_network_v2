@@ -4,7 +4,7 @@ let instance = axios.create({
     withCredentials: true,
     baseURL: 'https://social-network.samuraijs.com/api/1.0/',
     headers: {
-        'API-KEY': '5985ed13-d50a-4a8f-bad0-d3bfb7b7219b'
+        'API-KEY': '92443cb5-e90b-4e1a-83b1-b10dca160202'
     }
 });
 
@@ -32,11 +32,20 @@ export const ProfileAPI = {
     getUserProfile(userId) {
         return instance.get(`profile/${userId}`).then(response => response.data)
     },
+    updateUserProfile(profileInfo) {
+        return instance.put(`profile`, profileInfo).then(response => response.data)
+    },
     getUserStatus(userId) {
         return instance.get(`profile/status/${userId}`).then(response => response.data)
     },
     updateUserStatus(status) {
-        return instance.posts(`profile/status`, {status}).then(response => response.data)
+        return instance.put(`profile/status`, {status}).then(response => response.data)
+    },
+    saveProfilePhoto(photo) {
+        let formData = new FormData(); // instantiate it
+        // suppose you have your file ready
+        formData.set('file', photo);
+        return instance.put('/profile/photo', formData).then(response => response.data)
     }
 };
 
@@ -44,10 +53,16 @@ export const authMe = {
     me() {
         return instance.get(`auth/me`).then(response => response.data)
     },
-    login({email, password, rememberMe = true}) {
-        return instance.post('auth/login', {email, password, rememberMe}).then(response => response.data)
+    login({email, password, rememberMe = true, captcha = null}) {
+        return instance.post('auth/login', {email, password, rememberMe, captcha}).then(response => response.data)
     },
     logout() {
         return instance.delete('auth/login').then(response => response.data)
+    }
+};
+
+export const getCaptchaURL = {
+    getCaptcha() {
+        return instance.get('security/get-captcha-url').then(response => response.data)
     }
 };
